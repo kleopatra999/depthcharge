@@ -92,7 +92,9 @@ int bounce_buffer_stop(struct bounce_buffer *state);
 // Helper macros for alignment.
 #define DMA_MINALIGN (64)
 #define ROUND(a,b) (((a) + (b) - 1) & ~((b) - 1))
+#ifndef ALIGN
 #define ALIGN(x,a) __ALIGN_MASK((x),(typeof(x))(a)-1)
+#endif
 #define __ALIGN_MASK(x,mask) (((x)+(mask))&~(mask))
 #define ALLOC_CACHE_ALIGN_BUFFER(type, name, size)                   \
 	char __##name[ROUND(size * sizeof(type), DMA_MINALIGN) +     \

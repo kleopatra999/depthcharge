@@ -18,5 +18,5 @@
 ##
 
 VB_FIRMWARE_ARCH=arm
-ARCH_ABI_FLAGS += -mthumb
+ARCH_ABI_FLAGS += -mthumb -march=armv7-a
 ARCH_LINK_FLAGS :=

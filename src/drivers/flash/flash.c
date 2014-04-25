@@ -24,9 +24,36 @@
 
 #include "drivers/flash/flash.h"
 
-static FlashOps *flash_ops;
 
-void flash_set_ops(FlashOps *ops)
+
+#if  USE_EMMC
+static BlockDevOps *mmc_ops;
+static int emmc_rom_size = 0x400000;
+uint8_t *emmc_data;
+void flash_set_ops(BlockDevOps *ops)
+{
+	die_if(mmc_ops, "Flash ops already set.\n");
+	emmc_data = xmalloc(emmc_rom_size);
+	mmc_ops = ops;
+}
+void *flash_read(uint32_t offset, uint32_t size)
+{
+	uint64_t lba_start;
+	uint64_t count;
+	uint32_t data_offset = 0;
+	uint8_t *data;
+	die_if(!mmc_ops, "%s: No flash ops set.\n", __func__);
+	lba_start = offset/512;
+	count = size/512 + 1;
+	data_offset = offset % 512;
+	mmc_ops->read(mmc_ops, lba_start, count,emmc_data);
+	data = emmc_data + data_offset;
+	return data;
+}
+
+#else
+static FlashOps *flash_ops;
+void flash_set_ops(BlockDevOps *ops)
 {
 	die_if(flash_ops, "Flash ops already set.\n");
 	flash_ops = ops;
@@ -37,3 +64,6 @@ void *flash_read(uint32_t offset, uint32_t size)
 	die_if(!flash_ops, "%s: No flash ops set.\n", __func__);
 	return flash_ops->read(flash_ops, offset, size);
 }
+
+#endif
+

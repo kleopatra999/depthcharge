@@ -24,14 +24,17 @@
 #define __DRIVERS_FLASH_FLASH_H__
 
 #include <stdint.h>
-
+#define USE_EMMC  1
 typedef struct FlashOps
 {
 	void *(*read)(struct FlashOps *me, uint32_t offset, uint32_t size);
 } FlashOps;
-
-void flash_set_ops(FlashOps *ops);
-
+#if USE_EMMC
+#include "drivers/storage/blockdev.h"
+void flash_set_ops(BlockDevOps *ops);
 void *flash_read(uint32_t offset, uint32_t size);
-
+#else
+void flash_set_ops(FlashOps *ops);
+void *flash_read(uint32_t offset, uint32_t size);
+#endif
 #endif /* __DRIVERS_FLASH_FLASH_H__ */

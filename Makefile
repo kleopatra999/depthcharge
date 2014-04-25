@@ -48,7 +48,8 @@ HOSTCXX = g++
 HOSTCFLAGS := -I$(srck) -I$(objk)
 HOSTCXXFLAGS := -I$(srck) -I$(objk)
 
-LIBPAYLOAD_DIR := ../libpayload/install/libpayload
+LIBPAYLOAD_DIR := ../../../../coreboot/payloads/libpayload/install/libpayload
+#LIBPAYLOAD_DIR := /coreboot/payloads/libpayload/install/libpayload
 XCC := CC=$(CC) $(LIBPAYLOAD_DIR)/bin/lpgcc
 AS = $(LIBPAYLOAD_DIR)/bin/lpas
 OBJCOPY ?= $(CROSS_COMPILE)objcopy
@@ -84,7 +85,7 @@ ABI_FLAGS := $(ARCH_ABI_FLAGS) -ffreestanding -fno-builtin \
 	-fno-stack-protector -fomit-frame-pointer
 LINK_FLAGS = $(ARCH_LINK_FLAGS) $(ABI_FLAGS) -fuse-ld=bfd \
 	-Wl,-T,$(LDSCRIPT) -Wl,--gc-sections -Wl,-Map=$@.map
-CFLAGS := $(ARCH_CFLAGS) -Wall -Werror -Os $(INCLUDES) -std=gnu99 \
+CFLAGS := $(ARCH_CFLAGS) -Wall -Os $(INCLUDES) -std=gnu99 \
 	$(ABI_FLAGS) -ffunction-sections -fdata-sections -ggdb3
 
 all: real-target

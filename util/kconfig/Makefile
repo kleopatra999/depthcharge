@@ -65,8 +65,10 @@ allmodconfig: prepare $(objk)/conf
 
 defconfig: prepare $(objk)/conf
 ifeq ($(KBUILD_DEFCONFIG),)
+	echo defconfig
 	$(Q)$(objk)/conf -d $(Kconfig)
 else
+	echo defconfig $(KBUILD_DEFCONFIG)
 	@echo "*** Default configuration is based on '$(KBUILD_DEFCONFIG)'"
 	$(Q)$(objk)/conf -D $(KBUILD_DEFCONFIG) $(Kconfig)
 endif

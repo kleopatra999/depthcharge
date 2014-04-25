@@ -354,7 +354,7 @@ static int sd_send_op_cond(MmcMedia *media)
 
 	media->ocr = cmd.response[0];
 	media->high_capacity = ((media->ocr & OCR_HCS) == OCR_HCS);
-	media->rca = 0;
+	//media->rca = 0;
 	return 0;
 }
 
@@ -365,10 +365,13 @@ static int mmc_send_op_cond_iter(MmcMedia *media, MmcCommand *cmd, int use_arg)
 	cmd->resp_type = MMC_RSP_R3;
 
 	if (use_arg) {
-		uint32_t mask = media->op_cond_response &
-			(OCR_VOLTAGE_MASK | OCR_ACCESS_MODE);
-		cmd->cmdarg = media->ctrlr->voltages & mask;
-
+		//uint32_t mask = media->op_cond_response &
+		//	(OCR_VOLTAGE_MASK | OCR_ACCESS_MODE);
+		//cmd->cmdarg = media->ctrlr->voltages & mask;
+		cmd->cmdarg =
+			(media->ctrlr->voltages &
+			(media->op_cond_response & OCR_VOLTAGE_MASK)) |
+			(media->op_cond_response & OCR_ACCESS_MODE);
 		if (media->ctrlr->caps & MMC_MODE_HC)
 			cmd->cmdarg |= OCR_HCS;
 	}
@@ -430,7 +433,7 @@ static int mmc_complete_op_cond(MmcMedia *media)
 	media->ocr = cmd.response[0];
 
 	media->high_capacity = ((media->ocr & OCR_HCS) == OCR_HCS);
-	media->rca = 0;
+	//media->rca = 0;
 	return 0;
 }
 
@@ -946,10 +949,9 @@ static int mmc_send_if_cond(MmcMedia *media)
 int mmc_setup_media(MmcCtrlr *ctrlr)
 {
 	int err;
-
 	MmcMedia *media = xzalloc(sizeof(*media));
 	media->ctrlr = ctrlr;
-
+	media->rca = ctrlr->rca;
 	mmc_set_bus_width(ctrlr, 1);
 	mmc_set_clock(ctrlr, 1);
 
@@ -1005,17 +1007,13 @@ lba_t block_mmc_read(BlockDevOps *me, lba_t start, lba_t count, void *buffer)
 	MmcMedia *media = container_of(me, MmcMedia, dev.ops);
 	MmcCtrlr *ctrlr = media->ctrlr;
 	uint8_t *dest = (uint8_t *)buffer;
-
 	if (count == 0)
 		return 0;
-
 	if (start > media->dev.block_count ||
 	    start + count > media->dev.block_count)
 		return 0;
-
 	if (mmc_set_blocklen(ctrlr, media->read_bl_len))
 		return 0;
-
 	lba_t todo = count;
 	do {
 		lba_t cur = MIN(todo, ctrlr->b_max);
@@ -1036,7 +1034,6 @@ lba_t block_mmc_write(BlockDevOps *me, lba_t start, lba_t count,
 	MmcMedia *media = container_of(me, MmcMedia, dev.ops);
 	MmcCtrlr *ctrlr = media->ctrlr;
 	const uint8_t *src = (const uint8_t *)buffer;
-
 	if (count == 0)
 		return 0;
 

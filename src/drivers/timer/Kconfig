@@ -41,3 +41,18 @@ config DRIVER_TIMER_TEGRA_1US
 config DRIVER_TIMER_TEGRA_1US_ADDRESS
 	hex "Tegra 1us timer base address"
 	depends on DRIVER_TIMER_TEGRA_1US
+	
+config DRIVER_TIMER_ROCKCHIP
+	bool "rockchip timer driver"
+	depends on ARCH_ARM
+	default n
+
+config DRIVER_TIMER_ROCKCHIP_HZ
+	int "rockchip timer driver frequency"
+	depends on DRIVER_TIMER_ROCKCHIP
+	default 24000000
+
+config DRIVER_TIMER_ROCKCHIP_ADDRESS
+	hex "rockchip timer driver base address"
+	depends on DRIVER_TIMER_ROCKCHIP
+

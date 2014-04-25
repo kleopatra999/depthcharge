@@ -238,7 +238,7 @@ typedef struct MmcCtrlr {
 	uint32_t bus_hz;
 	uint32_t caps;
 	uint32_t b_max;
-
+	uint16_t rca;
 	/*
 	 * Some eMMC devices do not support iterative OCR setting, they need
 	 * to be programmed with the required/expected value. This field is
