@@ -20,3 +20,4 @@
 depthcharge-$(CONFIG_DRIVER_SERIAL_S5P) += s5p.c
 depthcharge-$(CONFIG_DRIVER_SERIAL_TEGRA) += tegra.c
 depthcharge-$(CONFIG_DRIVER_SERIAL_ROCKCHIP) += rockchip_serial.c
+depthcharge-y += rk_simple_serial.c

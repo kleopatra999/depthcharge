@@ -31,7 +31,7 @@
 #include "vboot/util/commonparams.h"
 
 
-
+#if 0
 ///UART_IER
 #define   THRE_INT_ENABLE                   (1<<7)
 #define   THRE_INT_DISABLE                   (0)
@@ -196,6 +196,7 @@ static void _print_hex (int hex)
 		hex <<= 4;
 	}
 }
+#endif
 
 int main(void)
 {

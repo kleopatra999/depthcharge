@@ -53,7 +53,6 @@ int start_rw_firmware(const void *compressed_image, uint32_t size)
 		printf("Only loading of 32 bit RW firmware is supported.\n");
 		return -1;
 	}
-
 	enter_trampoline((Elf32_Ehdr *)elf_image);
 
 	// We should never actually reach the end of this function.

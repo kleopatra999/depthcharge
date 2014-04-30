@@ -49,9 +49,9 @@ int vboot_init(void)
 		.flags = 0
 	};
 
-	int dev_switch = flag_fetch(FLAG_DEVSW);
-	int rec_switch = flag_fetch(FLAG_RECSW);
-	int wp_switch = flag_fetch(FLAG_WPSW);
+	int dev_switch = 0;//flag_fetch(FLAG_DEVSW);
+	int rec_switch = 0;//flag_fetch(FLAG_RECSW);
+	int wp_switch = 0;//lag_fetch(FLAG_WPSW);
 	int oprom_loaded = 0;
 	if (CONFIG_OPROM_MATTERS)
 		oprom_loaded = flag_fetch(FLAG_OPROM);
@@ -143,7 +143,6 @@ int vboot_select_firmware(void)
 	}
 
 	enum VbSelectFirmware_t select = fparams.selected_firmware;
-
 	// If an RW firmware was selected, start it.
 	if (select == VB_SELECT_FIRMWARE_A || select == VB_SELECT_FIRMWARE_B) {
 		const char *name;
@@ -157,12 +156,10 @@ int vboot_select_firmware(void)
 			printf("Didn't find section %s in the fmap.\n", name);
 			return 1;
 		}
-
 		uint32_t image_size;
 		const void *image = index_subsection(&rw_area, 0, &image_size);
 		if (!image)
 			return 1;
-
 		if (start_rw_firmware(image, image_size))
 			return 1;
 	}

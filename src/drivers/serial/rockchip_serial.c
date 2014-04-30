@@ -119,14 +119,16 @@ void serial_init(void)
 {
 	if (!lib_sysinfo.serial || !lib_sysinfo.serial->baseaddr)
 		return;
-
+	_print_hex(0xbb);
 	pUartReg = (pUART_REG )lib_sysinfo.serial->baseaddr;
 }
 
 void serial_console_init(void)
 {
+	_print_hex(0x77);
 	serial_init();
-
+	_print_hex(0x88);
+	_print_hex(pUartReg);
 	if (pUartReg) {
 		console_add_output_driver(&rk_serial_output);
 		console_add_input_driver(&rk_serial_input);
