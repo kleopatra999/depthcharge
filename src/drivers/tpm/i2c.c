@@ -53,9 +53,8 @@ static int i2ctpm_init(I2cTpm *tpm)
 	 * Probe TPM twice; the first probing might fail because TPM is asleep,
 	 * and the probing can wake up TPM.
 	 */
-	uint8_t tmp;
-	if (tpm->bus->read(tpm->bus, tpm->addr, 0, 0, &tmp, sizeof(tmp)) &&
-	    tpm->bus->read(tpm->bus, tpm->addr, 0, 0, &tmp, sizeof(tmp)))
+	if (i2c_writeb(tpm->bus, tpm->addr, 0, 0) &&
+	    i2c_writeb(tpm->bus, tpm->addr, 0, 0))
 		return -1;
 
 	if (tpm->chip_ops.init(&tpm->chip_ops))

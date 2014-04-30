@@ -1,4 +1,3 @@
-## This file is part of the coreboot project.
 ##
 ## Copyright 2013 Google Inc.  All rights reserved.
 ##
@@ -23,9 +22,7 @@ source src/drivers/gpio/Kconfig
 source src/drivers/input/Kconfig
 source src/drivers/net/Kconfig
 source src/drivers/power/Kconfig
-source src/drivers/serial/Kconfig
 source src/drivers/sound/Kconfig
 source src/drivers/storage/Kconfig
-source src/drivers/timer/Kconfig
 source src/drivers/tpm/Kconfig
 source src/drivers/video/Kconfig

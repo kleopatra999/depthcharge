@@ -1,6 +1,4 @@
 /*
- * This file is part of the coreboot project.
- *
  * Copyright 2013 Google Inc.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,10 +21,20 @@
 #include "drivers/bus/i2c/i2c.h"
 #include "drivers/bus/i2c/tegra.h"
 
-static int tegra_i2c_send_recv(TegraI2cRegs *regs, int read,
+static void tegra_i2c_reset(TegraI2c *bus)
+{
+	writel(bus->reset_bit, bus->set_reset_reg);
+	udelay(1);
+	writel(bus->reset_bit, bus->clear_reset_reg);
+	bus->initialized = 0;
+}
+
+static int tegra_i2c_send_recv(TegraI2c *bus, int read,
 			       uint32_t *headers, int header_words,
 			       uint8_t *data, int data_len)
 {
+	TegraI2cRegs *regs = bus->regs;
+
 	while (data_len) {
 		uint32_t status = readl(&regs->fifo_status);
 		int tx_empty = status & I2C_FIFO_STATUS_TX_FIFO_EMPTY_CNT_MASK;
@@ -71,13 +79,16 @@ static int tegra_i2c_send_recv(TegraI2cRegs *regs, int read,
 		if (transfer_status & I2C_PKT_STATUS_NOACK_ADDR) {
 			printf("%s: The address was not acknowledged.\n",
 			       __func__);
+			tegra_i2c_reset(bus);
 			return -1;
 		} else if (transfer_status & I2C_PKT_STATUS_NOACK_DATA) {
 			printf("%s: The data was not acknowledged.\n",
 			       __func__);
+			tegra_i2c_reset(bus);
 			return -1;
 		} else if (transfer_status & I2C_PKT_STATUS_ARB_LOST) {
 			printf("%s: Lost arbitration.\n", __func__);
+			tegra_i2c_reset(bus);
 			return -1;
 		}
 	}
@@ -88,7 +99,6 @@ static int tegra_i2c_send_recv(TegraI2cRegs *regs, int read,
 static int tegra_i2c_request(TegraI2c *bus, uint8_t chip, int cont,
 			     int restart, int read, void *data, int data_len)
 {
-	TegraI2cRegs *regs = bus->regs;
 	uint32_t headers[3];
 
 	if (restart && cont) {
@@ -114,68 +124,62 @@ static int tegra_i2c_request(TegraI2c *bus, uint8_t chip, int cont,
 	if (cont)
 		headers[2] |= IOHEADER_I2C_REQ_CONTINUE_XFER;
 
-	return tegra_i2c_send_recv(regs, read, headers, ARRAY_SIZE(headers),
+	return tegra_i2c_send_recv(bus, read, headers, ARRAY_SIZE(headers),
 				   data, data_len);
 }
 
-static int i2c_readwrite(TegraI2c *bus, uint8_t chip, uint32_t addr,
-			 int alen, uint8_t *buf, int len, int read)
+static int i2c_transfer_segment(TegraI2c *bus, uint8_t chip,
+				int restart, int read, void *buf, int len)
 {
 	const uint32_t max_payload =
 		(IOHEADER_PAYLOADSIZE_MASK + 1) >> IOHEADER_PAYLOADSIZE_SHIFT;
-	uint8_t abuf[sizeof(addr)];
-
-	int i;
-	for (i = 0; i < alen; i++)
-		abuf[i] = addr >> ((alen - i - 1) * 8);
-
-	if (tegra_i2c_request(bus, chip, !read, 0, 0, abuf, alen))
-		return -1;
-
 	while (len) {
 		int todo = MIN(len, max_payload);
 		int cont = (todo < len);
-		if (tegra_i2c_request(bus, chip, cont, 0, read, buf, todo)) {
+		if (tegra_i2c_request(bus, chip,
+				      cont, restart, read, buf, todo))
 			// We should reset the controller here.
 			return -1;
-		}
 		len -= todo;
 		buf += todo;
 	}
 	return 0;
 }
 
-void i2c_init(TegraI2c *bus)
+static void i2c_init(TegraI2c *bus)
 {
 	TegraI2cRegs *regs = bus->regs;
 	writel(I2C_CNFG_PACKET_MODE_EN, &regs->cnfg);
 	bus->initialized = 1;
 }
 
-int i2c_read(I2cOps *me, uint8_t chip, uint32_t addr,
-	     int addr_len, uint8_t *data, int data_len)
+static int i2c_transfer(I2cOps *me, I2cSeg *segments, int seg_count)
 {
+	I2cSeg *seg = segments;
 	TegraI2c *bus = container_of(me, TegraI2c, ops);
+
 	if (!bus->initialized)
 		i2c_init(bus);
-	return i2c_readwrite(bus, chip, addr, addr_len, data, data_len, 1);
+
+	for (int i = 0; i < seg_count; seg++, i++) {
+		if (i2c_transfer_segment(bus, seg->chip, i < seg_count - 1,
+				       seg->read, seg->buf, seg->len))
+			return -1;
+	}
+	return 0;
 }
 
-int i2c_write(I2cOps *me, uint8_t chip, uint32_t addr,
-	      int addr_len, uint8_t *data, int data_len)
-{
-	TegraI2c *bus = container_of(me, TegraI2c, ops);
-	if (!bus->initialized)
-		i2c_init(bus);
-	return i2c_readwrite(bus, chip, addr, addr_len, data, data_len, 0);
-}
-
-TegraI2c *new_tegra_i2c(void *regs, int controller_id)
+TegraI2c *new_tegra_i2c(void *regs, int controller_id, void *set_reset_reg,
+			void *clear_reset_reg, uint32_t reset_bit)
 {
 	TegraI2c *bus = xzalloc(sizeof(*bus));
-	bus->ops.read = i2c_read;
-	bus->ops.write = i2c_write;
+	bus->ops.transfer = &i2c_transfer;
 	bus->regs = regs;
 	bus->controller_id = controller_id;
+
+	bus->set_reset_reg = set_reset_reg;
+	bus->clear_reset_reg = clear_reset_reg;
+	bus->reset_bit = reset_bit;
+
 	return bus;
 }

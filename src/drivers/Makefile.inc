@@ -1,6 +1,4 @@
 ##
-## This file is part of the depthcharge project.
-##
 ## Copyright 2012 Google Inc.
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -25,9 +23,7 @@ subdirs-y += gpio
 subdirs-y += input
 subdirs-y += net
 subdirs-y += power
-subdirs-y += serial
 subdirs-y += sound
 subdirs-y += storage
-subdirs-y += timer
 subdirs-y += tpm
 subdirs-y += video

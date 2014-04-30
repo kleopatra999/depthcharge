@@ -1,7 +1,5 @@
 ##
-## This file is part of the depthcharge project.
-##
-## Copyright 2013 Google Inc.
+## Copyright 2014 Google Inc.
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -17,7 +15,5 @@
 ## Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 ##
 
-depthcharge-$(CONFIG_DRIVER_SERIAL_S5P) += s5p.c
-depthcharge-$(CONFIG_DRIVER_SERIAL_TEGRA) += tegra.c
-depthcharge-$(CONFIG_DRIVER_SERIAL_ROCKCHIP) += rockchip_serial.c
-depthcharge-y += rk_simple_serial.c
+depthcharge-y += board.c
+depthcharge-y += power_ops.c

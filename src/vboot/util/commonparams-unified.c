@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Google Inc.
+ * Copyright 2014 Google Inc.
  *
  * See file CREDITS for list of people who contributed to this
  * project.
@@ -22,12 +22,13 @@
 
 #include <libpayload.h>
 
-uint64_t timer_hz(void)
-{
-	return 0;
-}
+#include "vboot/util/commonparams.h"
+#include "vboot/util/vboot_handoff.h"
 
-uint64_t timer_raw_value(void)
+int find_common_params(void **blob, int *size)
 {
+	struct vboot_handoff *vboot_handoff = lib_sysinfo.vboot_handoff;
+	*blob = &vboot_handoff->shared_data[0];
+	*size = ARRAY_SIZE(vboot_handoff->shared_data);
 	return 0;
 }

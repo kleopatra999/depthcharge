@@ -1,6 +1,4 @@
 /*
- * This file is part of the coreboot project.
- *
  * Copyright 2013 Google Inc.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,9 +28,15 @@ typedef struct TegraI2c
 	void *regs;
 	int controller_id;
 	int initialized;
+
+	void *set_reset_reg;
+	void *clear_reset_reg;
+	uint32_t reset_bit;
 } TegraI2c;
 
-TegraI2c *new_tegra_i2c(void *regs, int controller_id);
+TegraI2c *new_tegra_i2c(void *regs, int controller_id,
+			void *set_reset_reg, void *clear_reset_reg,
+			uint32_t reset_bit);
 
 enum {
 	/* Word 0 */

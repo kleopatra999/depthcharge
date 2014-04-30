@@ -1,7 +1,5 @@
 ##
-## This file is part of the depthcharge project.
-##
-## Copyright 2013 Google Inc.
+## Copyright 2014 Google Inc.
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -17,7 +15,7 @@
 ## Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 ##
 
-depthcharge-$(CONFIG_DRIVER_TIMER_DUMMY) += dummy.c
-depthcharge-$(CONFIG_DRIVER_TIMER_MCT) += mct.c
-depthcharge-$(CONFIG_DRIVER_TIMER_TEGRA_1US) += tegra_1us.c
-depthcharge-$(CONFIG_DRIVER_TIMER_ROCKCHIP) += rk_timer.c
+depthcharge-$(CONFIG_CONSOLE) += command.c
+depthcharge-$(CONFIG_CONSOLE) += console_main.c
+depthcharge-$(CONFIG_CONSOLE) += memory.c
+depthcharge-$(CONFIG_CONSOLE) += storage.c

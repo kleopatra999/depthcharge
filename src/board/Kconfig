@@ -1,4 +1,3 @@
-## This file is part of the coreboot project.
 ##
 ## Copyright 2013 Google Inc.  All rights reserved.
 ##
@@ -41,6 +40,9 @@ endif
 if BOARD = "fox_wtm2"
 source src/board/fox_wtm2/Kconfig
 endif
+if BOARD = "gizmo"
+source src/board/gizmo/Kconfig
+endif
 if BOARD = "link"
 source src/board/link/Kconfig
 endif
@@ -49,6 +51,9 @@ source src/board/nyan/Kconfig
 endif
 if BOARD = "nyan_big"
 source src/board/nyan_big/Kconfig
+endif
+if BOARD = "nyan_blaze"
+source src/board/nyan_blaze/Kconfig
 endif
 if BOARD = "panther"
 source src/board/panther/Kconfig
@@ -67,6 +72,9 @@ source src/board/samus/Kconfig
 endif
 if BOARD = "slippy"
 source src/board/slippy/Kconfig
+endif
+if BOARD = "storm"
+source src/board/storm/Kconfig
 endif
 
 endmenu

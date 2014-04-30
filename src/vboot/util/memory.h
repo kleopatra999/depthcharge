@@ -23,6 +23,9 @@
 #ifndef __VBOOT_UTIL_MEMORY_H__
 #define __VBOOT_UTIL_MEMORY_H__
 
-int wipe_unused_memory(void);
+#include <stdint.h>
+
+int memory_wipe_unused(void);
+void memory_mark_used(uint64_t start, uint64_t end);
 
 #endif /* __VBOOT_UTIL_MEMORY_H__ */

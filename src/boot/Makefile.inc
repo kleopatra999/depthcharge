@@ -1,6 +1,4 @@
 ##
-## This file is part of the depthcharge project.
-##
 ## Copyright 2012 Google Inc.
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -21,3 +19,4 @@ depthcharge-y += commandline.c
 depthcharge-$(CONFIG_KERNEL_DUMMY) += dummy.c
 depthcharge-$(CONFIG_KERNEL_FIT) += fit.c
 depthcharge-$(CONFIG_ARCH_ARM) += coreboot.c
+depthcharge-$(CONFIG_KERNEL_FIT) += ramoops.c

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Google Inc.
+ * Copyright 2014 Google Inc.
  *
  * See file CREDITS for list of people who contributed to this
  * project.
@@ -20,18 +20,22 @@
  * MA 02111-1307 USA
  */
 
-#include <config.h>
 #include <libpayload.h>
 
-static uint32_t * const tegra_tmrus =
-	(void *)CONFIG_DRIVER_TIMER_TEGRA_1US_ADDRESS;
+#include "base/init_funcs.h"
 
-uint64_t timer_hz(void)
+static uint8_t board_id(void)
 {
-	return 1000 * 1000;
+	static int id = -1;
+
+	return id;
 }
 
-uint64_t timer_raw_value(void)
+static int board_setup(void)
 {
-	return readl(tegra_tmrus);
+	uint8_t id = board_id();
+
+	return id;
 }
+
+INIT_FUNC(board_setup);

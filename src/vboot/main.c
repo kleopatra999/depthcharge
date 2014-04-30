@@ -26,8 +26,8 @@
 #include "arch/sign_of_life.h"
 #include "base/init_funcs.h"
 #include "base/timestamp.h"
-#include "console/common.h"
 #include "config.h"
+#include "debug/cli/common.h"
 #include "drivers/input/input.h"
 #include "vboot/stages.h"
 #include "vboot/util/commonparams.h"
@@ -77,9 +77,8 @@ int main(void)
 
 	timestamp_add_now(TS_RO_VB_INIT);
 
-#if CONFIG_CONSOLE
-	console_loop();
-#endif
+	if (CONFIG_CONSOLE)
+		console_loop();
 
 	// Set up the common param structure, not clearing shared data.
 	if (vboot_init_handoff())

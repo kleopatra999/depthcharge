@@ -1,6 +1,4 @@
 ##
-## This file is part of the depthcharge project.
-##
 ## Copyright 2012 Google Inc.
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -18,7 +16,8 @@
 ##
 
 depthcharge-y += boot.c
-depthcharge-y += commonparams.c
+readonly-y += commonparams.c
+readwrite-y += commonparams.c
 depthcharge-y += enter_trampoline.c
 depthcharge-y += gcc.c
 depthcharge-y += physmem.c
