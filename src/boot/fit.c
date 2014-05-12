@@ -33,7 +33,7 @@
 
 //#define HL_DEBUG 1
 
-typedef enum CompressionType
+typedef enum CompressionTypec
 {
 	CompressionInvalid,
 	CompressionNone
