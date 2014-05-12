@@ -26,11 +26,11 @@
 VbError_t VbExNvStorageRead(uint8_t* buf)
 {
 	printf("Disk based nonvolatile storage not implemented.\n");
-	halt();
+	//halt();
 }
 
 VbError_t VbExNvStorageWrite(const uint8_t* buf)
 {
 	printf("Disk based nonvolatile storage not implemented.\n");
-	halt();
+	//halt();
 }

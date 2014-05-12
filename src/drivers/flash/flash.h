@@ -33,6 +33,7 @@ typedef struct FlashOps
 #include "drivers/storage/blockdev.h"
 void flash_set_ops(BlockDevOps *ops);
 void *flash_read(uint32_t offset, uint32_t size);
+void kernel_read(uint32_t lba_start, uint32_t size,void *buffer);
 #else
 void flash_set_ops(FlashOps *ops);
 void *flash_read(uint32_t offset, uint32_t size);

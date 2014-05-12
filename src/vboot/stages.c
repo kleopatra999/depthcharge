@@ -49,9 +49,9 @@ int vboot_init(void)
 		.flags = 0
 	};
 
-	int dev_switch = 0;//flag_fetch(FLAG_DEVSW);
-	int rec_switch = 0;//flag_fetch(FLAG_RECSW);
-	int wp_switch = 0;//lag_fetch(FLAG_WPSW);
+	int dev_switch = flag_fetch(FLAG_DEVSW);
+	int rec_switch = flag_fetch(FLAG_RECSW);
+	int wp_switch = flag_fetch(FLAG_WPSW);
 	int oprom_loaded = 0;
 	if (CONFIG_OPROM_MATTERS)
 		oprom_loaded = flag_fetch(FLAG_OPROM);

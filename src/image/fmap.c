@@ -135,12 +135,9 @@ const Fmap *fmap_base(void)
 
 const int fmap_find_area(const char *name, FmapArea *area)
 {
-	printf("fmap_find_area\n");
 	fmap_init();
-	printf("fmap_find_area main_fmap->nareas =%d\n",main_fmap->nareas);
 	for (int i = 0; i < main_fmap->nareas; i++) {
 		const FmapArea *cur = &(main_fmap->areas[i]);
-		printf("cur->name=%s\n",cur->name);
 		if (!strncmp(name, (const char *)cur->name,
 				sizeof(cur->name))) {
 			memcpy(area, cur, sizeof(FmapArea));

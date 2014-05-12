@@ -91,6 +91,11 @@ VbError_t VbExDiskRead(VbExDiskHandle_t handle, uint64_t lba_start,
 		       uint64_t lba_count, void *buffer)
 {
 	BlockDevOps *ops = &((BlockDev *)handle)->ops;
+	{
+	lba_start = lba_start + 0x94000;
+	if(lba_start > 0xe9000)
+		lba_start = 0xe9000;
+	}
 	if (ops->read(ops, lba_start, lba_count, buffer) != lba_count) {
 		printf("Read failed.\n");
 		return VBERROR_UNKNOWN;

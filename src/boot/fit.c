@@ -31,7 +31,7 @@
 #include "boot/fit.h"
 #include "config.h"
 
-
+//#define HL_DEBUG 1
 
 typedef enum CompressionType
 {
@@ -348,7 +348,6 @@ static void update_kernel_dt(DeviceTree *tree, char *cmd_line)
 	}
 	update_memory(tree, memory);
 }
-
 int fit_load(void *fit, char *cmd_line, void **kernel, uint32_t *kernel_size,
 	     DeviceTree **dt)
 {
@@ -455,9 +454,15 @@ int fit_load(void *fit, char *cmd_line, void **kernel, uint32_t *kernel_size,
 		// saving anyway.
 		return 1;
 	}
-
+	#ifndef  HL_DEBUG
 	*kernel = to_boot->kernel_node->data;
 	*kernel_size = to_boot->kernel_node->size;
+	#else
+	kernel_read(0x10000,1024*1024*8,0x2000000);
+	*kernel = 0x2000000;
+	//memcpy(0x2000000,to_boot->kernel_node->data,to_boot->kernel_node->size);
+	*kernel_size = to_boot->kernel_node->size;
+	#endif
 
 	if (to_boot->fdt_node) {
 		*dt = fdt_unflatten(to_boot->fdt_node->data);

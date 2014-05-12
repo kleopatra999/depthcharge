@@ -41,6 +41,18 @@ void flash_set_ops(BlockDevOps *ops)
 	flash_data = xmalloc(flash_rom_size);
 	mmc_ops = ops;
 }
+void kernel_read(uint32_t  lba_start, uint32_t size,void *buffer)
+{
+	uint64_t count;
+	uint64_t start;
+	start = lba_start;
+	count = size/512 + 1;
+	if (mmc_ops->read(mmc_ops, start, count, buffer) != count) {
+		printf("kernel Read failed.\n");
+		return -1;
+	}
+	return 0;
+}
 void *flash_read(uint32_t offset, uint32_t size)
 {
 	uint64_t lba_start;

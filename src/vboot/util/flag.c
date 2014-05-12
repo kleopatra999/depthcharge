@@ -34,6 +34,19 @@ int flag_fetch(FlagIndex index)
 	die_if(index < 0 || index >= FLAG_MAX_FLAG,
 	       "Flag index %d larger than max %d.\n", index, FLAG_MAX_FLAG);
 
+#if 1
+{
+	if(index == 2)
+		return 1;
+	else if(index == 3)
+		return 1;
+	else
+		return 0;
+}
+#else
+return 0;
+#endif
+
 	GpioOps *gpio = flag_gpios[index];
 	die_if(gpio == NULL, "Don't have a gpio set up for flag %d.\n", index);
 
