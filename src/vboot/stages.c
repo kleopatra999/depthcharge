@@ -212,7 +212,6 @@ int vboot_select_and_load_kernel(void)
 		(kparams.bootloader_address - 0x100000);
 	void *params = (uint8_t *)loader - CrosParamSize;
 	void *orig_cmd_line = (uint8_t *)params - CmdLineSize;
-
 	if (commandline_subst((char *)orig_cmd_line, 0,
 			      kparams.partition_number + 1,
 			      kparams.partition_guid,

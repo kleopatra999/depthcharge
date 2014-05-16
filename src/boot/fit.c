@@ -31,7 +31,7 @@
 #include "boot/fit.h"
 #include "config.h"
 
-//#define HL_DEBUG 1
+//#define RK_DEBUG 0
 
 typedef enum CompressionTypec
 {
@@ -209,7 +209,6 @@ static void update_chosen(DeviceTreeNode *chosen, char *cmd_line)
 static void update_reserve_map(uint64_t start, uint64_t end, void *data)
 {
 	DeviceTree *tree = (DeviceTree *)data;
-
 	DeviceTreeReserveMapEntry *entry = xzalloc(sizeof(*entry));
 	entry->start = start;
 	entry->size = end - start;
@@ -282,27 +281,22 @@ static void update_memory(DeviceTree *tree, DeviceTreeNode *memory)
 	Ranges reserved;
 	ranges_init(&mem);
 	ranges_init(&reserved);
-
 	for (int i = 0; i < lib_sysinfo.n_memranges; i++) {
 		struct memrange *range = &lib_sysinfo.memrange[i];
 		uint64_t start = range->base;
 		uint64_t end = range->base + range->size;
-
 		if (range->type == CB_MEM_RAM) {
 			ranges_add(&mem, start, end);
 		} else {
 			ranges_add(&reserved, start, end);
 		}
 	}
-
 	ranges_for_each(&reserved, &update_reserve_map, tree);
-
 	DeviceTreeProperty *reg = NULL;
 	DeviceTreeProperty *prop;
 	list_for_each(prop, memory->properties, list_node)
 		if (!strcmp("reg", prop->prop.name))
 			reg = prop;
-
 	if (!reg) {
 		reg = xzalloc(sizeof(*reg));
 		list_insert_after(&reg->list_node, &memory->properties);
@@ -333,14 +327,13 @@ static void update_kernel_dt(DeviceTree *tree, char *cmd_line)
 		else if (!strcmp(node->name, "memory"))
 			memory = node;
 	}
-
+	
 	if (!chosen) {
 		chosen = xzalloc(sizeof(*chosen));
 		list_insert_after(&chosen->list_node, &tree->root->children);
 		chosen->name = "chosen";
 	}
 	update_chosen(chosen, cmd_line);
-
 	if (!memory) {
 		memory = xzalloc(sizeof(*memory));
 		list_insert_after(&memory->list_node, &tree->root->children);
@@ -454,7 +447,7 @@ int fit_load(void *fit, char *cmd_line, void **kernel, uint32_t *kernel_size,
 		// saving anyway.
 		return 1;
 	}
-	#ifndef  HL_DEBUG
+	#ifndef  RK_DEBUG
 	*kernel = to_boot->kernel_node->data;
 	*kernel_size = to_boot->kernel_node->size;
 	#else
@@ -463,7 +456,6 @@ int fit_load(void *fit, char *cmd_line, void **kernel, uint32_t *kernel_size,
 	//memcpy(0x2000000,to_boot->kernel_node->data,to_boot->kernel_node->size);
 	*kernel_size = to_boot->kernel_node->size;
 	#endif
-
 	if (to_boot->fdt_node) {
 		*dt = fdt_unflatten(to_boot->fdt_node->data);
 		if (!*dt) {
