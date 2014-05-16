@@ -23,14 +23,23 @@
 #include <libpayload.h>
 #include <vboot_api.h>
 
+#define RK_DEBUG
 VbError_t VbExNvStorageRead(uint8_t* buf)
 {
 	printf("Disk based nonvolatile storage not implemented.\n");
-	//halt();
+	#ifdef RK_DEBUG
+	return -1;
+	#else
+	halt();
+	#endif
 }
 
 VbError_t VbExNvStorageWrite(const uint8_t* buf)
 {
 	printf("Disk based nonvolatile storage not implemented.\n");
-	//halt();
+	#ifdef RK_DEBUG
+	return -1;
+	#else
+	halt();
+	#endif
 }

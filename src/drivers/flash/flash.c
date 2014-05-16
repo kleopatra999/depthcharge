@@ -28,16 +28,14 @@
 
 #if  USE_EMMC
 static BlockDevOps *mmc_ops;
-static int emmc_rom_size = 0x200000;
 static int flash_rom_size = 0x400000;
 #define LBA_OFFSET  0x6000
-uint8_t *emmc_data;
 uint8_t *flash_data;
 
 void flash_set_ops(BlockDevOps *ops)
 {
 	die_if(mmc_ops, "Flash ops already set.\n");
-	emmc_data = xmalloc(emmc_rom_size);
+	//emmc_data = xmalloc(emmc_rom_size);
 	flash_data = xmalloc(flash_rom_size);
 	mmc_ops = ops;
 }
@@ -49,9 +47,9 @@ void kernel_read(uint32_t  lba_start, uint32_t size,void *buffer)
 	count = size/512 + 1;
 	if (mmc_ops->read(mmc_ops, start, count, buffer) != count) {
 		printf("kernel Read failed.\n");
-		return -1;
+		return ;
 	}
-	return 0;
+	return;
 }
 void *flash_read(uint32_t offset, uint32_t size)
 {
@@ -63,6 +61,7 @@ void *flash_read(uint32_t offset, uint32_t size)
 	die_if(!mmc_ops, "%s: No flash ops set.\n", __func__);
 	lba_start = offset/512 + LBA_OFFSET;
 	count = size/512 + 1;
+	emmc_data = xmalloc(count*512);
 	data_offset = offset % 512;
 	mmc_ops->read(mmc_ops, lba_start, count,emmc_data);
 	data = emmc_data + data_offset;

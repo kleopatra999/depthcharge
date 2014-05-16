@@ -40,16 +40,12 @@ int main(void)
 {
 	// Let the world know we're alive.
 	sign_of_life(0xab);
-	_print_hex(0x55);
-
 	// Initialize some consoles.
 	serial_console_init();
 	cbmem_console_init();
 	input_init();
-	_print_hex(0x22);
 
 	printf("\n\nStarting read/write depthcharge on " CONFIG_BOARD "...\n");
-	_print_hex(0x33);
 
 	// Set up time keeping.
 	timestamp_init();
@@ -57,7 +53,6 @@ int main(void)
 	// Run any generic initialization functions that are compiled in.
 	if (run_init_funcs())
 		halt();
-	_print_hex(0x44);
 
 	timestamp_add_now(TS_RW_VB_SELECT_AND_LOAD_KERNEL);
 

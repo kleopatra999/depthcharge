@@ -51,7 +51,7 @@ static int board_setup(void)
 	list_insert_after(&emmc_host->mmc.ctrlr.list_node,
 			  &fixed_block_dev_controllers);
 	{
-		ListNode *ctrlrs, *devs;
+		ListNode *ctrlrs;
 		ctrlrs = &fixed_block_dev_controllers;
 		BlockDevCtrlr *ctrlr;
 		list_for_each(ctrlr, *ctrlrs, list_node) {

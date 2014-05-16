@@ -20,19 +20,21 @@ Revision:       1.00
 #endif
 static int mmcwaitbusy(void)
 {
-  int count;
-  /* Wait max 100 ms */
-  count = MAX_RETRY_COUNT;
-  /* before reset ciu, it should check DATA0. if when DATA0 is low and
-     it resets ciu, it might make a problem */
-  while ((Readl ((gMmcBaseAddr + MMC_STATUS)) & MMC_BUSY)){
-    if(count == 0){
-      return -1;
-    }
-    count--;
-    udelay(1);
-  }
-  return 0;
+	int count;
+	int ret = 0;
+	/* Wait max 100 ms */
+	count = MAX_RETRY_COUNT;
+	/* before reset ciu, it should check DATA0. if when DATA0 is low and
+	it resets ciu, it might make a problem */
+	while ((Readl ((gMmcBaseAddr + MMC_STATUS)) & MMC_BUSY)){
+		if(count == 0){
+			ret = -1;
+			break;
+		}
+		count--;
+		udelay(1);
+	}
+	return ret;
 }
 static int  mci_send_cmd(u32 cmd, u32 arg)
 {
@@ -44,7 +46,8 @@ static int  mci_send_cmd(u32 cmd, u32 arg)
 		RetryCount--;
 	}
 	 if(RetryCount == 0)
-		return -1;
+		return  -1;
+	 return 0;
 }
 static void emmcpoweren(char En)
 {
@@ -138,11 +141,10 @@ static u32 rk_mmc_prepare_command(MmcCommand *cmd, MmcData *data)
 static int rk_mmc_start_command(MmcCommand *cmd, unsigned int cmd_flags)
 {
 	unsigned int RetryCount = 0;
-	//unsigned int time_out = 10000;
 	Writel(gMmcBaseAddr + MMC_CMDARG, cmd->cmdarg);
 	Writel(gMmcBaseAddr + MMC_CMD, cmd_flags | MMC_CMD_START | MMC_USE_HOLD_REG);
 	udelay(1);
-	for (RetryCount; RetryCount<MAX_RETRY_COUNT; RetryCount++) {
+	for (RetryCount = 0; RetryCount < 250000; RetryCount++) {
 		if(Readl(gMmcBaseAddr + MMC_RINTSTS) & MMC_INT_CMD_DONE){
 			Writel(gMmcBaseAddr + MMC_RINTSTS, MMC_INT_CMD_DONE);
 			break;
@@ -301,7 +303,6 @@ static int rk_emmc_request(MmcCtrlr *ctrlr, MmcCommand *cmd, MmcData *data)
 	int ret;
 	int Status;
 	int value;
-	int timeout;
 	if (data) {
 		Writel(gMmcBaseAddr +MMC_BYTCNT, data->blocksize*data->blocks);
 		Writel(gMmcBaseAddr +MMC_BLKSIZ, data->blocksize);
@@ -341,7 +342,7 @@ static int rk_emmc_request(MmcCtrlr *ctrlr, MmcCommand *cmd, MmcData *data)
 			ret = EmmcReadData(data->dest, data->blocks);
 		}
 		else if(data->flags == MMC_DATA_WRITE){
-			ret = EmmcWriteData(data->src, data->blocks);
+			ret = EmmcWriteData((void*)data->src, data->blocks);
 		}
 	}
 	return ret;
@@ -354,7 +355,7 @@ void rkclk_emmc_set_clk(int div)
 {
 	Writel((gCruBaseAddr + CRU_CLKSELS_CON(12)),(0xFFul<<24)|(div-1)<<8 |(1<<14));
 }
-rkmci_setup_bus(RkmciHost *host, uint32_t freq)
+void rkmci_setup_bus(RkmciHost *host, uint32_t freq)
 {
 	int suit_clk_div;
 	int src_clk;
@@ -363,7 +364,7 @@ rkmci_setup_bus(RkmciHost *host, uint32_t freq)
 	int value;
 	freq = host->mmc.f_min;
 	if ((freq == host->clock) || (freq == 0))
-		return 0;
+		return ;
 	Writel(gMmcBaseAddr + MMC_CLKENA, 0);
 	/* inform CIU */
 	mci_send_cmd(MMC_CMD_START |MMC_CMD_UPD_CLK | MMC_CMD_PRV_DAT_WAIT, 0);
