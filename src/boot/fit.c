@@ -31,7 +31,11 @@
 #include "boot/fit.h"
 #include "config.h"
 
-//#define RK_DEBUG 0
+//#define RK_DEBUG 
+
+#ifdef RK_DEBUG
+#include "drivers/flash/flash.h"
+#endif
 
 typedef enum CompressionTypec
 {
@@ -451,9 +455,8 @@ int fit_load(void *fit, char *cmd_line, void **kernel, uint32_t *kernel_size,
 	*kernel = to_boot->kernel_node->data;
 	*kernel_size = to_boot->kernel_node->size;
 	#else
-	kernel_read(0x10000,1024*1024*8,0x2000000);
-	*kernel = 0x2000000;
-	//memcpy(0x2000000,to_boot->kernel_node->data,to_boot->kernel_node->size);
+	kernel_read((uint32_t)0x10000,(uint32_t)1024*1024*8,(void*)0x3000000);
+	*kernel = (void*)0x3000000;
 	*kernel_size = to_boot->kernel_node->size;
 	#endif
 	if (to_boot->fdt_node) {
