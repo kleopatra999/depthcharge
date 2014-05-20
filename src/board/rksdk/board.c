@@ -24,7 +24,7 @@
 
 #include "base/init_funcs.h"
 #include "board/daisy/i2c_arb.h"
-#include "drivers/bus/i2c/s3c24x0.h"
+#include "drivers/bus/i2c/rk3288.h"
 #include "drivers/bus/i2s/exynos5.h"
 #include "drivers/bus/i2s/i2s.h"
 #include "drivers/bus/spi/exynos5.h"
@@ -61,6 +61,7 @@ static int board_setup(void)
 			}
 		}
 		flash_set_ops(&emmc_host->mmc.media->dev.ops);
+		//Rk3288I2c *rki2c0 = new_rk3288_i2c(0, 100);		
 	#if 0
 		BlockDev *bdev;
 		uint64_t lba_start;

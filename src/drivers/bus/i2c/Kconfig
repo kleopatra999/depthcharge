@@ -29,3 +29,7 @@ config DRIVER_BUS_I2C_TEGRA
 config DRIVER_BUS_I2C_DESIGNWARE
 	bool "Designware I2C driver"
 	default n
+
+config DRIVER_BUS_I2C_RK3288
+	bool "Rk3288 I2C driver"
+	default n
