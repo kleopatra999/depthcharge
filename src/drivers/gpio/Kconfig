@@ -47,7 +47,7 @@ config DRIVER_GPIO_EXYNOS5420
 config DRIVER_GPIO_TEGRA
 	bool "Tegra GPIO driver"
 	default n
-	
+
 config DRIVER_GPIO_RK3288
 	bool "Rk3288 GPIO driver"
 	default n

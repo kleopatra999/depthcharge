@@ -78,8 +78,7 @@
 #define GPIO_LS_SYNC		0x60
 
 
-typedef struct Rk3288Gpio
-{
+typedef struct Rk3288Gpio {
 	GpioOps ops;
 	int (*use)(struct Rk3288Gpio *me, unsigned use);
 	int dir_set;
@@ -89,12 +88,12 @@ typedef struct Rk3288Gpio
 
 
 typedef enum eGPIOPinLevel {
-	GPIO_LOW=0,
+	GPIO_LOW = 0,
 	GPIO_HIGH
 } eGPIOPinLevel_t;
 
 typedef enum eGPIOPinDirection {
-	GPIO_IN=0,
+	GPIO_IN = 0,
 	GPIO_OUT
 } eGPIOPinDirection_t;
 

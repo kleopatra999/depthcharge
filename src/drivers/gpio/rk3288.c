@@ -29,18 +29,21 @@
 #include "drivers/gpio/gpio.h"
 
 static int rk_gpio_bank_reg[GPIO_BANK_NUM] = {
-	0xFF750000,   //gpio0
-	0xFF780000,   //gpio1
-	0xFF790000,   //gpio2
-	0xFF7A0000,   //gpio3
-	0xFF7B0000,   //gpio4
-	0xFF7C0000,   //gpio5
-	0xFF7D0000,   //gpio6
-	0xFF7E0000,   //gpio7
-	0xFF7F0000,   //gpio8
+	0xFF750000,   /* gpio0 */
+	0xFF780000,   /* gpio1 */
+	0xFF790000,   /* gpio2 */
+	0xFF7A0000,   /* gpio3 */
+	0xFF7B0000,   /* gpio4 */
+	0xFF7C0000,   /* gpio5 */
+	0xFF7D0000,   /* gpio6 */
+	0xFF7E0000,   /* gpio7 */
+	0xFF7F0000,   /* gpio8 */
 };
 
-static inline void rk_gpio_bit_op(int *regbase, unsigned int offset, unsigned int bit, unsigned char flag)
+static inline void rk_gpio_bit_op(int *regbase,
+						unsigned int offset,
+						unsigned int bit,
+						unsigned char flag)
 {
 	unsigned int val = readl(regbase + offset);
 
@@ -52,17 +55,21 @@ static inline void rk_gpio_bit_op(int *regbase, unsigned int offset, unsigned in
 	writel(val, regbase + offset);
 }
 
-static inline void rk_gpio_set_pin_level(int *regbase, unsigned int bit, eGPIOPinLevel_t level)
+static inline void rk_gpio_set_pin_level(int *regbase,
+							unsigned int bit,
+							eGPIOPinLevel_t level)
 {
 	rk_gpio_bit_op(regbase, GPIO_SWPORT_DR, bit, level);
 }
 
 static inline int rk_gpio_get_pin_level(int *regbase, unsigned int bit)
 {
-	return ((readl(regbase + GPIO_EXT_PORT) & bit) != 0);
+	return (readl(regbase + GPIO_EXT_PORT) & bit) != 0;
 }
 
-static inline void rk_gpio_set_pin_direction(int *regbase, unsigned int bit, eGPIOPinDirection_t direction)
+static inline void rk_gpio_set_pin_direction(int *regbase,
+						unsigned int bit,
+						eGPIOPinDirection_t direction)
 {
 	rk_gpio_bit_op(regbase, GPIO_SWPORT_DDR, bit, direction);
 }
@@ -73,11 +80,14 @@ static int rk3288_gpio_get_value(GpioOps *me)
 	Rk3288Gpio *gpio = container_of(me, Rk3288Gpio, ops);
 
 	if (!gpio->dir_set) {
-		rk_gpio_set_pin_direction((int*)rk_gpio_bank_reg[gpio->bank], gpio->index, GPIO_IN);
+		rk_gpio_set_pin_direction((int *)rk_gpio_bank_reg[gpio->bank],
+								gpio->index,
+								GPIO_IN);
 		gpio->dir_set = 1;
 	}
-	
-	return rk_gpio_get_pin_level((int*)rk_gpio_bank_reg[gpio->bank], gpio->index);
+
+	return rk_gpio_get_pin_level((int *)rk_gpio_bank_reg[gpio->bank],
+		gpio->index);
 }
 
 
@@ -85,10 +95,14 @@ static int rk3288_gpio_set_value(GpioOps *me, unsigned value)
 {
 	assert(me);
 	Rk3288Gpio *gpio = container_of(me, Rk3288Gpio, ops);
-	rk_gpio_set_pin_level((int*)rk_gpio_bank_reg[gpio->bank], gpio->index, value);
+	rk_gpio_set_pin_level((int *)rk_gpio_bank_reg[gpio->bank],
+						gpio->index,
+						value);
 
 	if (!gpio->dir_set) {
-		rk_gpio_set_pin_direction((int*)rk_gpio_bank_reg[gpio->bank], gpio->index, GPIO_OUT);
+		rk_gpio_set_pin_direction((int *)rk_gpio_bank_reg[gpio->bank],
+								gpio->index,
+								GPIO_OUT);
 		gpio->dir_set = 1;
 	}
 
