@@ -20,9 +20,7 @@
 
 #include "drivers/bus/i2c/i2c.h"
 
-
-typedef struct Rk3288I2c
-{
+typedef struct Rk3288I2c {
 	I2cOps ops;
 	void *reg_addr;
 	int clk_src;
