@@ -39,7 +39,7 @@
 #define MMC_UHS_REG	0X74
 #define MMC_RST_N	0x78
 
-#define MAX_RETRY_COUNT (250000)  //250ms
+#define MAX_RETRY_COUNT (250000)
 #define MMC_FIFO_BASE	0x200
 #define MMC_DATA	MMC_FIFO_BASE
 /* Control register defines */
@@ -56,53 +56,53 @@
 /* Power enable register defines */
 #define MMC_PWREN_ON			BIT(0)
 /* Clock Enable register defines */
-#define MMC_CLKEN_LOW_PWR             	BIT(16)
-#define MMC_CLKEN_ENABLE              	BIT(0)
+#define MMC_CLKEN_LOW_PWR	BIT(16)
+#define MMC_CLKEN_ENABLE		BIT(0)
 /* time-out register defines */
-#define MMC_TMOUT_DATA(n)             	_SBF(8, (n))
-#define MMC_TMOUT_DATA_MSK            	0xFFFFFF00
-#define MMC_TMOUT_RESP(n)             	((n) & 0xFF)
-#define MMC_TMOUT_RESP_MSK            	0xFF
+#define MMC_TMOUT_DATA(n)		_SBF(8, (n))
+#define MMC_TMOUT_DATA_MSK	0xFFFFFF00
+#define MMC_TMOUT_RESP(n)		((n) & 0xFF)
+#define MMC_TMOUT_RESP_MSK	0xFF
 /* card-type register defines */
-#define MMC_CTYPE_8BIT                	BIT(16)
-#define MMC_CTYPE_4BIT                	BIT(0)
-#define MMC_CTYPE_1BIT                	0
+#define MMC_CTYPE_8BIT			BIT(16)
+#define MMC_CTYPE_4BIT			BIT(0)
+#define MMC_CTYPE_1BIT			0
 /* Interrupt status & mask register defines */
-#define MMC_INT_SDIO                  	BIT(16)
-#define MMC_INT_EBE                   	BIT(15)
-#define MMC_INT_ACD                   	BIT(14)
-#define MMC_INT_SBE                   	BIT(13)
-#define MMC_INT_HLE                   	BIT(12)
-#define MMC_INT_FRUN                  	BIT(11)
-#define MMC_INT_HTO                   	BIT(10)
-#define MMC_INT_DTO                   	BIT(9)
-#define MMC_INT_RTO                   	BIT(8)
-#define MMC_INT_DCRC                  	BIT(7)
-#define MMC_INT_RCRC                  	BIT(6)
-#define MMC_INT_RXDR                  	BIT(5)
-#define MMC_INT_TXDR                  	BIT(4)
-#define MMC_INT_DATA_OVER             	BIT(3)
-#define MMC_INT_CMD_DONE              	BIT(2)
-#define MMC_INT_RESP_ERR              	BIT(1)
-#define MMC_INT_CD                    	BIT(0)
-#define MMC_INT_ERROR                 	0xbfc2
+#define MMC_INT_SDIO			BIT(16)
+#define MMC_INT_EBE			BIT(15)
+#define MMC_INT_ACD			BIT(14)
+#define MMC_INT_SBE			BIT(13)
+#define MMC_INT_HLE			BIT(12)
+#define MMC_INT_FRUN		BIT(11)
+#define MMC_INT_HTO			BIT(10)
+#define MMC_INT_DTO			BIT(9)
+#define MMC_INT_RTO			BIT(8)
+#define MMC_INT_DCRC		BIT(7)
+#define MMC_INT_RCRC		BIT(6)
+#define MMC_INT_RXDR		BIT(5)
+#define MMC_INT_TXDR		BIT(4)
+#define MMC_INT_DATA_OVER	BIT(3)
+#define MMC_INT_CMD_DONE	BIT(2)
+#define MMC_INT_RESP_ERR	BIT(1)
+#define MMC_INT_CD			BIT(0)
+#define MMC_INT_ERROR		0xbfc2
 /* Command register defines */
-#define MMC_CMD_START                 	BIT(31)
-#define MMC_USE_HOLD_REG		BIT(29)
-#define MMC_CMD_CCS_EXP               	BIT(23)
-#define MMC_CMD_CEATA_RD              	BIT(22)
-#define MMC_CMD_UPD_CLK               	BIT(21)
-#define MMC_CMD_INIT                  	BIT(15)
-#define MMC_CMD_STOP                  	BIT(14)
-#define MMC_CMD_PRV_DAT_WAIT          	BIT(13)
-#define MMC_CMD_SEND_STOP             	BIT(12)
-#define MMC_CMD_STRM_MODE             	BIT(11)
-#define MMC_CMD_DAT_WR                	BIT(10)
-#define MMC_CMD_DAT_EXP               	BIT(9)
-#define MMC_CMD_RESP_CRC              	BIT(8)
+#define MMC_CMD_START		BIT(31)
+#define MMC_USE_HOLD_REG	BIT(29)
+#define MMC_CMD_CCS_EXP	BIT(23)
+#define MMC_CMD_CEATA_RD	BIT(22)
+#define MMC_CMD_UPD_CLK	BIT(21)
+#define MMC_CMD_INIT			BIT(15)
+#define MMC_CMD_STOP		BIT(14)
+#define MMC_CMD_PRV_DAT_WAIT	BIT(13)
+#define MMC_CMD_SEND_STOP          BIT(12)
+#define MMC_CMD_STRM_MODE	BIT(11)
+#define MMC_CMD_DAT_WR		BIT(10)
+#define MMC_CMD_DAT_EXP		BIT(9)
+#define MMC_CMD_RESP_CRC		BIT(8)
 #define MMC_CMD_RESP_LONG		BIT(7)
 #define MMC_CMD_RESP_EXP		BIT(6)
-#define MMC_CMD_INDX(n)		        ((n) & 0x1F)
+#define MMC_CMD_INDX(n)			((n) & 0x1F)
 
 /* Status register defines */
 #define MMC_GET_FCNT(x)		        (((x)>>17) & 0x1FF)
@@ -120,18 +120,18 @@
 
 /* Common flag combinations */
 #define MMC_DATA_ERROR_FLAGS (MMC_INT_DTO | MMC_INT_DCRC | \
-		                                 MMC_INT_HTO | MMC_INT_SBE  | \
-		                                 MMC_INT_EBE)
-#define MMC_CMD_RES_TIME_OUT  	MMC_INT_RTO                                 
-#define MMC_CMD_ERROR_FLAGS  ( MMC_INT_RCRC | \
-		                                 MMC_INT_RESP_ERR)
+								MMC_INT_HTO | MMC_INT_SBE  |\
+								MMC_INT_EBE)
+#define MMC_CMD_RES_TIME_OUT	MMC_INT_RTO
+#define MMC_CMD_ERROR_FLAGS  (MMC_INT_RCRC | \
+								MMC_INT_RESP_ERR)
 #define MMC_ERROR_FLAGS      (MMC_DATA_ERROR_FLAGS | \
-		                                 MMC_CMD_ERROR_FLAGS  | MMC_INT_HLE)
+							MMC_CMD_ERROR_FLAGS  | MMC_INT_HLE)
 
 #define MMC_BUS_CLOCK  24000000
 
 #define Readl(addr)                     (*(volatile u32 *)(addr))
-#define Writel(addr, v)              	(*(volatile u32 *)(addr) = v)
+#define Writel(addr, v)			(*(volatile u32 *)(addr) = v)
 
 #define BLKSZ 0x200
 #define EMMC_BASE_ADDR 0xFF0F0000
@@ -143,25 +143,23 @@
 
 
 typedef enum {
-  READ = 0,
-  WRITE,
+ READ = 0,
+ WRITE,
 } OPERATION_TYPE;
 
 
-typedef struct RkmciHost {
+typedef struct rkmcihost {
 	MmcCtrlr mmc;
-
 	void *ioaddr;
 	uint32_t clock;
 	uint32_t src_hz;
 	uint32_t clksel_val;
 	uint32_t fifoth_val;
-
 	int initialized;
 	int removable;
-} RkmciHost;
+} rkmcihost;
 
-extern RkmciHost  *new_rkmci_host(uintptr_t ioaddr, uint32_t src_hz, int bus_width,
+extern rkmcihost  *new_rkmci_host(uintptr_t ioaddr, uint32_t src_hz, int bus_width,
 			  int removable, uint32_t clksel_val);
 
 #endif

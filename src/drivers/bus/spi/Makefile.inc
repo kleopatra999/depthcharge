@@ -17,3 +17,4 @@
 
 depthcharge-$(CONFIG_DRIVER_BUS_SPI_EXYNOS5) += exynos5.c
 depthcharge-$(CONFIG_DRIVER_BUS_SPI_TEGRA) += tegra.c
+depthcharge-$(CONFIG_DRIVER_BUS_SPI_RK3288) += rk3288.c

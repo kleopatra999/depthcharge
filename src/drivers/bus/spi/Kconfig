@@ -22,3 +22,7 @@ config DRIVER_BUS_SPI_TEGRA
 	bool "Tegra SPI driver"
 	depends on DRIVER_DMA_TEGRA_APB
 	default n
+	
+config DRIVER_BUS_SPI_RK3288
+	bool "RK3288 SPI driver"
+	default n
