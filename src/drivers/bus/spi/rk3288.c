@@ -142,6 +142,7 @@ static int spi_recv(Rk3288Spi *bus, void *in, uint32_t size)
 	unsigned int cr0 = 0;
 	uint32_t bytes_remaining_to_be_transfered;
 	int len;
+	uint8_t *p = in;
 	len = size;
 	writel(CONTROLLER_DISABLE, bus->reg_addr + SPI_ENR_OFF);
 	assert(!(readl(bus->reg_addr + SPI_ENR_OFF) & 0x01));
