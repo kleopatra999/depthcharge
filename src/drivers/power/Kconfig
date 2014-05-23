@@ -33,3 +33,16 @@ config DRIVER_POWER_PCH
 	depends on ARCH_X86
 	help
 	  Reboot or power off using registers in the Intel chipset.
+
+config DRIVER_POWER_RK3288
+	bool "RK3288 SOC power management"
+	default n
+	depends on ARCH_ARM
+	help
+	  Reboot using registers in an RK3288 SOC.
+
+config DRIVER_POWER_RK808
+	bool "RK808 PMIC power management"
+	default n
+	help
+	  power off using the RK808 PMIC.

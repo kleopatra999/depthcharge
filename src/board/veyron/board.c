@@ -27,13 +27,15 @@
 #include "drivers/bus/i2c/rk3288.h"
 #include "drivers/bus/i2s/exynos5.h"
 #include "drivers/bus/i2s/i2s.h"
-#include "drivers/bus/spi/exynos5.h"
+#include "drivers/bus/spi/rk3288.h"
 #include "drivers/bus/usb/usb.h"
 #include "drivers/ec/cros/i2c.h"
 #include "drivers/flash/spi.h"
-#include "drivers/gpio/exynos5250.h"
+
 #include "drivers/gpio/sysinfo.h"
-#include "drivers/power/exynos.h"
+#include "board/rksdk/power_ops.h"
+#include "drivers/power/rk3288.h"
+#include "drivers/power/rk808.h"
 #include "drivers/sound/i2s.h"
 #include "drivers/sound/max98095.h"
 #include "drivers/sound/route.h"
@@ -43,45 +45,21 @@
 #include "drivers/tpm/tpm.h"
 #include "vboot/util/flag.h"
 
-static RkmciHost *emmc_host; ;
+//static rkmcihost *emmc_host;
 static int board_setup(void)
 {
-	emmc_host = new_rkmci_host(0xff0f0000, 24000000,
-					 8, 0, 0x03030001);
-	list_insert_after(&emmc_host->mmc.ctrlr.list_node,
+	rkmcihost *emmc = new_rkmci_host(0xff0f0000, 24000000, 8, 0, 0x03030001);
+	Rk3288Spi *spi2  =  new_rk3288_spi(2, 0, 400000, 0, 0);
+	flash_set_ops(&new_spi_flash(&spi2->ops, 0x400000)->ops);
+	/*Rk3288I2c *rki2c0 = new_rk3288_i2c(0, 100);*/
+	list_insert_after(&emmc->mmc.ctrlr.list_node,
 			  &fixed_block_dev_controllers);
-	{
-		ListNode *ctrlrs;
-		ctrlrs = &fixed_block_dev_controllers;
-		BlockDevCtrlr *ctrlr;
-		list_for_each(ctrlr, *ctrlrs, list_node) {
-			if (ctrlr->ops.update && ctrlr->need_update &&
-			    ctrlr->ops.update(&ctrlr->ops)) {
-				
-			}
-		}
-		flash_set_ops(&emmc_host->mmc.media->dev.ops);
-		//Rk3288I2c *rki2c0 = new_rk3288_i2c(0, 100);		
-	#if 0
-		BlockDev *bdev;
-		uint64_t lba_start;
-		uint64_t lba_count;
-		int hl;
-		char buffer[100] = {0};
-		lba_start = 0x2000;
-		lba_count = 1;
-		
-		
-		BlockDevOps *ops = &emmc_host->mmc.media->dev.ops;
-		printf("ops=%x\n",ops);
-		if (ops->read(ops, lba_start, lba_count, buffer) != lba_count) {
-			printf("Read failed.\n");
-			return 0;
-		}
-	#endif
-	}
+		Rk3288I2c *rki2c0 = new_rk3288_i2c(0, 100);
+		Rk808Pmic *rk808 = new_rk808_pmic(&rki2c0->ops, 0x1b);
+		Rk3288PowerOps *rk3288_power_ops =
+						new_rk3288_power_ops(&rk3288_cpu_power_ops, &rk808->ops);
+		power_set_ops(&rk3288_power_ops->ops);
 	return 0;
 }
 
 INIT_FUNC(board_setup);
-
