@@ -17,7 +17,7 @@
 
 #include <libpayload.h>
 #include "base/container_of.h"
-#include "board/rksdk/power_ops.h"
+#include "board/veyron/power_ops.h"
 
 static int rk3288_cpu_reboot(PowerOps *me)
 {

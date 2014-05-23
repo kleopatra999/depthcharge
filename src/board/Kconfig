@@ -31,8 +31,8 @@ endif
 if BOARD = "daisy"
 source src/board/daisy/Kconfig
 endif
-if BOARD = "rksdk"
-source src/board/rksdk/Kconfig
+if BOARD = "veyron"
+source src/board/veyron/Kconfig
 endif
 if BOARD = "falco"
 source src/board/falco/Kconfig

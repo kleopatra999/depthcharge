@@ -33,7 +33,7 @@
 #include "drivers/flash/spi.h"
 
 #include "drivers/gpio/sysinfo.h"
-#include "board/rksdk/power_ops.h"
+#include "board/veyron/power_ops.h"
 #include "drivers/power/rk3288.h"
 #include "drivers/power/rk808.h"
 #include "drivers/sound/i2s.h"
