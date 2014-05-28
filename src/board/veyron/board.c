@@ -47,8 +47,8 @@
 
 static int board_setup(void)
 {
-	rkmcihost *emmc = new_rkmci_host(0xff0f0000, 24000000, 8, 0, 0x03030001);
-	Rk3288Spi *spi2  =  new_rk3288_spi(2, 0,594000000,12000000, 0, 0);/*src clk from gpll,defined in coreboot*/
+	rkmcihost *emmc = new_rkmci_host(0xff0f0000, 594000000, 8, 0, 0x03030001);/*src_hz from gpll,defined in coreboot*/
+	Rk3288Spi *spi2  =  new_rk3288_spi(2, 0,594000000,12000000, 0, 0);/*src_clk from gpll,defined in coreboot*/
 	flash_set_ops(&new_spi_flash(&spi2->ops, 0x400000)->ops);
 	list_insert_after(&emmc->mmc.ctrlr.list_node,
 			  &fixed_block_dev_controllers);

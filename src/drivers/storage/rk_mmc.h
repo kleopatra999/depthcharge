@@ -128,7 +128,7 @@
 #define MMC_ERROR_FLAGS      (MMC_DATA_ERROR_FLAGS | \
 							MMC_CMD_ERROR_FLAGS  | MMC_INT_HLE)
 
-#define MMC_BUS_CLOCK  24000000
+#define MMC_BUS_CLOCK  96000000
 
 #define Readl(addr)                     (*(volatile u32 *)(addr))
 #define Writel(addr, v)			(*(volatile u32 *)(addr) = v)

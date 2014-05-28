@@ -81,7 +81,6 @@ static void emmc_gpio_init()
 static int rk_emmc_init()
 {
 	int timeout = 10000;
-	printf("rk_emmc_init\n");
 	emmc_dev_reset();
 	emmcreset();
 	emmc_gpio_init();
@@ -349,18 +348,15 @@ void rkmci_setup_bus(rkmcihost *host, uint32_t freq)
 	int src_clk_div;
 	int second_freq;
 	int value;
-	freq = host->mmc.f_min;
 	if ((freq == host->clock) || (freq == 0))
 		return;
 	Writel(gMmcBaseAddr + MMC_CLKENA, 0);
 	/* inform CIU */
 	mci_send_cmd(MMC_CMD_START|MMC_CMD_UPD_CLK|MMC_CMD_PRV_DAT_WAIT, 0);
-	if (freq > 24000000)
-		freq = 24000000/2;
 	/*rk32 emmc src generall pll,emmc automic divide
 	setting freq to 1/2,
 	for get the right freq ,we divide this freq to 1/2*/
-	src_clk = 24000000/2;
+	src_clk = host->src_hz/2;
 	src_clk_div = src_clk/freq;
 	if (src_clk_div > 0x3e)
 		src_clk_div = 0x3e;
