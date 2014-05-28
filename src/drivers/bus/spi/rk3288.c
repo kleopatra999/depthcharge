@@ -128,7 +128,7 @@ static void clrbits32(uint32_t *data, uint32_t bits)
 }
 static int rockchip_spi_wait_till_not_busy(Rk3288Spi *bus)
 {
-	unsigned int delay = 1000;
+	unsigned int delay = 1000000;
 	while (delay--) {
 		if (!(readl(bus->reg_addr + SPI_SR_OFF) & 0x01))
 			return 0;
@@ -157,11 +157,11 @@ static int spi_recv(Rk3288Spi *bus, void *in, uint32_t size)
 		writel(CONTROLLER_DISABLE, bus->reg_addr + SPI_ENR_OFF);
 		if (len > 0xffff) {
 			bytes_remaining_to_be_transfered = 0xffff;
-			writel(0xffff, bus->reg_addr + SPI_CTRLR1_OFF);
+			writel(0xfffe, bus->reg_addr + SPI_CTRLR1_OFF);
 			len = len - 0xffff;
 		} else {
 			bytes_remaining_to_be_transfered = len;
-			writel(len, bus->reg_addr + SPI_CTRLR1_OFF);
+			writel(len-1, bus->reg_addr + SPI_CTRLR1_OFF);
 			len = 0;
 		}
 		writel(CONTROLLER_ENABLE, bus->reg_addr + SPI_ENR_OFF);
@@ -171,9 +171,11 @@ static int spi_recv(Rk3288Spi *bus, void *in, uint32_t size)
 				bytes_remaining_to_be_transfered--;
 			}
 		}
+		if (rockchip_spi_wait_till_not_busy(bus)){
+			printf("spi wait busy err\n");
+			return -1;
+		}
 	}
-	if (rockchip_spi_wait_till_not_busy(bus))
-		return -1;
 	return  0;
 }
 static int spi_send(Rk3288Spi *bus, const void *out, uint32_t size)
@@ -227,7 +229,7 @@ static int spi_start(SpiOps *me)
 	writel(FIFO_DEPTH / 2 - 1, bus->reg_addr + SPI_TXFTLR_OFF);
 	writel(FIFO_DEPTH / 2 - 1, bus->reg_addr + SPI_RXFTLR_OFF);
 	setbits32(bus->reg_addr + SPI_SER_OFF, 1);
-	/*writel(bus->div, bus->reg_addr + SPI_BAUDR_OFF);*/
+	writel(bus->div, bus->reg_addr + SPI_BAUDR_OFF);
 	return res;
 }
 
@@ -241,37 +243,40 @@ static int spi_stop(SpiOps *me)
 	/*writel(CONTROLLER_DISABLE, bus->reg_addr + SPI_ENR_OFF);*/
 	return res;
 }
-Rk3288Spi *new_rk3288_spi(int id, unsigned int cs, unsigned int speed,
+Rk3288Spi *new_rk3288_spi(int id, unsigned int cs, unsigned int src_clk,unsigned int speed,
 		ClockPolarity polarity, ClockPhase phase)
 {
 	Rk3288Spi *bus = NULL;
 	unsigned int clk_src = 0, div = 0;
+	uint8_t clk_src_div = 0;
 	if (cs >= MAX_SLAVE)
 		return NULL;
 	bus = xzalloc(sizeof(*bus));
-	clk_src = 74250000;
 	switch (id) {
 	case 0:
 		bus->reg_addr = (void *)0xff110000;
 		writel(0xff005500, (void *)0xff770050);
 		writel(0x00030001, (void *)0xff770054);
+		clk_src_div = readl((u32*)(0xff760000 + 0xc4))&0x7f; /*cru*/
 		break;
 	case 1:
 		bus->reg_addr = (void *)0xff120000;
 		writel(0xff00aa00, (void *)0xff770070);
+		clk_src_div = readl((u32*)(0xff760000 + 0xc4))&0x7f00;/*cru*/
 		break;
 	case 2:
 		bus->reg_addr = (void *)0xff130000;
 		writel(0xf0c05040, (void *)0xff770080);
 		writel(0x000f0005, (void *)0xff770084);
+		clk_src_div = readl((u32*)(0xff760000 + 0xfc))&0x7f;/*cru*/
 		break;
 	default:
 		free(bus);
 		return NULL;
 	}
-	div = DIV_CEIL(clk_src, speed);
-	/* must be even and greate than 1*/
-	div = DIV_CEIL(div, 2) * 2;
+	clk_src = src_clk/(clk_src_div + 1);
+	div = clk_src /speed;
+	div = (div + 1) & 0xfffe;
 	if (div <= 2)
 		div = 2;
 	bus->cs = cs;

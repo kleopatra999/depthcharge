@@ -40,6 +40,6 @@ typedef struct Rk3288Spi {
 	int initialized;
 } Rk3288Spi;
 
-Rk3288Spi *new_rk3288_spi(int id, unsigned int cs, unsigned int speed, ClockPolarity polarity, ClockPhase phase);
+Rk3288Spi *new_rk3288_spi(int id, unsigned int cs, unsigned int src_clk,unsigned int speed, ClockPolarity polarity, ClockPhase phase);
 
 #endif /* __DRIVERS_BUS_SPI_RK3288_H__ */
